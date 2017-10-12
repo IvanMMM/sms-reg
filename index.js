@@ -46,11 +46,12 @@ class SmsReg {
    * @arg {string} [host=api.sms-reg.com] - API host base url
    * @arg {number} [port=80] - host's port
    */
-  constructor(key, host, port) {
+  constructor(key, displayFn, host, port) {
     if (!key || typeof key !== 'string') {
       throw new Error('API key is required');
     }
     this._key = key;
+	this._displayFn = displayFn || function(){};
     this._host = host || defaults.host;
     this._port = port || defaults.port;
   }
@@ -90,12 +91,12 @@ class SmsReg {
   }
 
   _method(name) {
-    console.log('_method', name);
+    this._displayFn('_method', name);
     return new Promise((resolve, reject) => {
       arguments[0] = model[arguments[0]];
       let options = this._makeOptions.apply(this, arguments);
       options['apikey'] = this._key;
-      console.log(options);
+      this._displayFn(options);
       let req = http.request({
         hostname: this._host,
         port: this._port,
